@@ -6,7 +6,7 @@
 
     <groupId>de.darian</groupId>
     <artifactId>sumohub</artifactId>
-    <version>1.0</version>
+    <version>0.1.1</version>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
@@ -30,7 +30,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>de.darian.sumohub.main.Main</mainClass>
+                            <mainClass>de.darian.sumo.main.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -48,7 +48,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>de.darian.sumohub.main.Main</mainClass>
+                                    <mainClass>de.darian.sumo.main.Main</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

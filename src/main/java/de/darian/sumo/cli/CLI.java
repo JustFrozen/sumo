@@ -1,7 +1,7 @@
-package de.darian.sumohub.cli;
+package de.darian.sumo.cli;
 
-import de.darian.sumohub.command.Command;
-import de.darian.sumohub.command.CommandHandler;
+import de.darian.sumo.command.Command;
+import de.darian.sumo.command.CommandHandler;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.history.DefaultHistory;
@@ -9,12 +9,16 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 public class CLI {
 
     public static final String PREFIX = "sumo";
     public static final String EXIT_WORD = "exit";
+    public static String VERSION = "unknown";
+    public static boolean DEBUG = false;
 
     private static final String commandRegex = "(^\\s*" + PREFIX + "\\s*$)|(^\\s*" + PREFIX + "\\s*.+$)";
     private static final String substituteRegex = "(\\s*sumo\\s*)|(\\s+)";
@@ -27,17 +31,44 @@ public class CLI {
     private LineReader reader;
     private CommandHandler commandHandler;
 
-    public CLI() {
+    public CLI(boolean debug) {
+        CLI.DEBUG = debug;
+
+        getVersionFromPom();
+
         buildTerminal();
         buildLineReader();
 
         initializeCommands();
 
+
         startCLI();
     }
 
+    private void getVersionFromPom() {
+        Properties properties = new Properties();
+        String version = "unknown";
+        try (InputStream stream = CLI.class.getResourceAsStream(
+                "/META-INF/maven/de.darian/sumohub/pom.properties")) {
+            if (stream != null) {
+                properties.load(stream);
+                version = properties.getProperty("version", version);
+            }
+        } catch (IOException e) {
+            if (DEBUG) {
+                System.out.println("Error while retrieving the app version: " + e.getMessage());
+            }
+            System.out.println("Could not read the version. Exiting.");
+            System.exit(0);
+        }
+        CLI.VERSION = version;
+    }
+
     private void startCLI() {
-        System.out.println("Starting CLI...");
+        if (CLI.DEBUG) {
+            System.out.print("Starting CLI... ");
+        }
+        System.out.println("sumo v" + CLI.VERSION);
 
         String line;
         while ((line = reader.readLine("> ")) != null) {
@@ -54,15 +85,18 @@ public class CLI {
                 Command command = commandHandler.getCommandHashMap().get(commandString);
                 // execute command
                 boolean success = command.execute("temp");
-                // display success
-                System.out.println("Command executed: " + success);
+                if(!success && CLI.DEBUG) {
+                    System.out.println("Command " + commandString + " failed.");
+                }
             }
         }
     }
 
     private void initializeCommands() {
         commandHandler = new CommandHandler();
-        System.out.println("Initialized CommandHandler.");
+        if(DEBUG) {
+            System.out.println("Initialized CommandHandler.");
+        }
     }
 
     private void buildLineReader() {
@@ -70,14 +104,18 @@ public class CLI {
                 .terminal(terminal)
                 .history(new DefaultHistory())
                 .build();
-        System.out.println("Built JLine Reader.");
+        if (CLI.DEBUG) {
+            System.out.println("Built JLine Reader.");
+        }
     }
 
     private void buildTerminal() {
         try {
             terminal = TerminalBuilder.builder().system(true).build();
         } catch (IOException e) {
-            System.out.println("Error while building JLine Terminal: " + e.getMessage());
+            if(CLI.DEBUG) {
+                System.out.println("Error while building JLine Terminal: " + e.getMessage());
+            }
         }
         finally {
             if (terminal == null) {
@@ -85,6 +123,8 @@ public class CLI {
                 System.exit(0);
             }
         }
-        System.out.println("Built JLine Terminal.");
+        if (DEBUG) {
+            System.out.println("Built JLine Terminal.");
+        }
     }
 }

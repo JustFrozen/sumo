@@ -1,4 +1,6 @@
-package de.darian.sumohub.command;
+package de.darian.sumo.command;
+
+import de.darian.sumo.cli.CLI;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +11,9 @@ public class CommandHashMap extends HashMap<String, Command> {
         super(commands.size());
         commands.forEach(cmd -> {
             super.put(cmd.getCommandName(), cmd);
-            System.out.println("Added command: " + cmd.getCommandName() + ".");
+            if (CLI.DEBUG) {
+                System.out.println("Added command: " + cmd.getCommandName());
+            }
         });
     }
 
