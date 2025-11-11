@@ -10,6 +10,7 @@ import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -68,7 +69,7 @@ public class CLI {
         if (CLI.DEBUG) {
             System.out.print("Starting CLI... ");
         }
-        System.out.println("sumo v" + CLI.VERSION);
+        System.out.println("sumo v-" + CLI.VERSION);
 
         String line;
         while ((line = reader.readLine("> ")) != null) {
@@ -79,17 +80,39 @@ public class CLI {
 
             // only trigger command when "sumo" is prefixed
             if (CLI.COMMAND_PATTERN.matcher(line).matches()) {
-                // trim command to only be subcommands
-                String commandString = CLI.SUBSTITUTE_PATTERN.matcher(line).replaceAll(" ").trim();
-                // get command obj from string
-                Command command = commandHandler.getCommandHashMap().get(commandString);
-                // execute command
-                boolean success = command.execute("temp");
-                if(!success && CLI.DEBUG) {
-                    System.out.println("Command " + commandString + " failed.");
-                }
+                handleCommandLineInput(line);
             }
         }
+    }
+
+    private void handleCommandLineInput(String line) {
+        // trim prefix so there are only commands left
+        String cleanedCommandString = CLI.SUBSTITUTE_PATTERN.matcher(line).replaceAll(" ").trim();
+        String[] commandParts = cleanedCommandString.split(" ");
+
+        // Length 1 means either NO base command provided, OR just ONE base command
+        // In both cases, try to get the command from the hashmap, if the string is empty, or it's an unknown command
+        // the null command will be pulled
+        Command command = commandHandler.getCommandHashMap().get(commandParts[0]);
+        if (commandParts.length == 1) {
+            command.execute("");
+        } else { // Length > 1 means there is a base command and at least one argument
+            // Iterate through the arguments, skip the first one (first one is the base command)
+            Arrays.stream(commandParts).skip(1).forEach(commandString -> {
+
+            });
+        }
+        // Else the first element is the base command
+        String baseCommandString = commandParts[0];
+
+
+        // base command is the first command part
+        //Command baseCommand = commandHandler.getCommandHashMap().get(commandParts[0]);
+        // execute command
+//        boolean success = command.execute("temp");
+//        if(!success && CLI.DEBUG) {
+//            System.out.println("Command " + commandString + " failed.");
+//        }
     }
 
     private void initializeCommands() {

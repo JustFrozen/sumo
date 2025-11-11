@@ -8,15 +8,17 @@ public class Command {
     private final String shortDescription;
     private final String longDescription;
     private final String[] aliases;
-    private final CommandArgument[] commandArguments;
+    private final Command[] subCommands;
+    private final String[] arguments;
     private final Consumer<String> action;
 
-    public Command(String command, String shortDescription, String longDescription, String[] aliases, CommandArgument[] commandArguments, Consumer<String> action) {
+    public Command(String command, String shortDescription, String longDescription, String[] aliases, Command[] subCommands, String[] arguments, Consumer<String> action) {
         this.commandName = command;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
         this.aliases = aliases;
-        this.commandArguments = commandArguments;
+        this.subCommands = subCommands;
+        this.arguments = arguments;
         this.action = action;
     }
 
@@ -41,12 +43,16 @@ public class Command {
         return aliases;
     }
 
-    public CommandArgument[] getCommandArguments() {
-        return commandArguments;
+    public Command[] getSubCommands() {
+        return subCommands;
+    }
+
+    public String[] getArguments() {
+        return arguments;
     }
 
     @Override
     public String toString() {
-        return commandName + "\t[" + String.join(", ", aliases) + "]";
+        return commandName;
     }
 }
