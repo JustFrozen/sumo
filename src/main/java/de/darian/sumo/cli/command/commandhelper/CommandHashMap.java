@@ -1,6 +1,8 @@
-package de.darian.sumo.command;
+package de.darian.sumo.cli.command.commandhelper;
 
 import de.darian.sumo.cli.CLI;
+import de.darian.sumo.cli.command.Command;
+import de.darian.sumo.cli.command.CommandHandler;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,4 +1,4 @@
-package de.darian.sumo.command;
+package de.darian.sumo.cli.command.commandhelper;
 
 import org.jetbrains.annotations.NotNull;
 

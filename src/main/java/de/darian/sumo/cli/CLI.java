@@ -1,7 +1,7 @@
 package de.darian.sumo.cli;
 
-import de.darian.sumo.command.Command;
-import de.darian.sumo.command.CommandHandler;
+import de.darian.sumo.cli.command.Command;
+import de.darian.sumo.cli.command.CommandHandler;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.history.DefaultHistory;
@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class CLI {
 

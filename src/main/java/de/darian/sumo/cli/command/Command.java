@@ -1,6 +1,7 @@
-package de.darian.sumo.command;
+package de.darian.sumo.cli.command;
 
 import de.darian.sumo.cli.CLI;
+import de.darian.sumo.cli.command.commandhelper.ArgumentsConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
