@@ -17,14 +17,12 @@ public class CommandHandler {
 
     public CommandHandler() {
         List<Command> commands = CommandFactory.createCommands();
+        List<Command> validCommands = new ArrayList<>(validateCommands(commands));
+
         Command nullCommand = CommandFactory.createNullCommand();
-
-        List<Command> validCommands = new ArrayList<>();
-
         if(nullCommand != null) {
             validCommands.add(nullCommand);
         }
-        validCommands.addAll(validateCommands(commands));
 
         if (CLI.DEBUG) {
             System.out.println("Created and validated " + validCommands.size() + " command(s).");

@@ -1,6 +1,6 @@
 package de.darian.sumo.command;
 
-import java.util.function.Consumer;
+import de.darian.sumo.cli.CLI;
 
 public class Command {
 
@@ -10,9 +10,9 @@ public class Command {
     private final String[] aliases;
     private final Command[] subCommands;
     private final String[] arguments;
-    private final Consumer<String> action;
+    private final ArgumentsConsumer action;
 
-    public Command(String command, String shortDescription, String longDescription, String[] aliases, Command[] subCommands, String[] arguments, Consumer<String> action) {
+    public Command(String command, String shortDescription, String longDescription, String[] aliases, Command[] subCommands, String[] arguments, ArgumentsConsumer action) {
         this.commandName = command;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
@@ -22,9 +22,18 @@ public class Command {
         this.action = action;
     }
 
-    public boolean execute(String parameter) {
-        action.accept(parameter);
-        return true;
+    public boolean execute(String[] arguments) {
+        boolean success = true;
+        try {
+            success = action.accept(arguments);
+        } catch (Exception e) {
+            success = false;
+            System.out.println("An error occurred while executing command \"" + commandName + "\".");
+            if (CLI.DEBUG) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        }
+        return success;
     }
 
     public String getCommandName() {

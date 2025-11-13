@@ -31,6 +31,8 @@ public class CommandFactory {
         commands.add(createGreetCommand());
         commands.add(createVersionCommand());
         commands.add(createHelpCommand());
+
+        // Note: NullCommand is created later by CommandHandler to avoid validation
     }
 
     private static Command createVersionCommand() {
@@ -40,7 +42,10 @@ public class CommandFactory {
         final String[] aliases = new String[] {"v", "ver"};
         final Command[] subCommands = new Command[] {};
         final String[] arguments = new String[] {};
-        final Consumer<String> action = (_) -> System.out.println("sumo version: " + CLI.VERSION);
+        final ArgumentsConsumer action = (_) -> {
+            System.out.println("sumo version: " + CLI.VERSION);
+            return true;
+        };
 
         return new Command(commandName, shortDescription, longDescription, aliases, subCommands, arguments, action);
     }
@@ -63,7 +68,7 @@ public class CommandFactory {
         final Consumer<Command> commandPrinter = (cmd) -> System.out.printf(printFormat, cmd.getCommandName(),
                 String.join(", ", cmd.getAliases()), cmd.getShortDescription());
 
-        final Consumer<String> action = (_) -> {
+        final ArgumentsConsumer action = (_) -> {
             System.out.println("-----sumo help page-----");
             System.out.println("usage: sumo <command> [<args>] [<flags>]");
             System.out.println();
@@ -71,6 +76,7 @@ public class CommandFactory {
             System.out.printf(printFormat, "Command", "Aliases", "Short Description");
             commands.stream().filter(isNullCommand.negate()).forEach(commandPrinter);
             System.out.println("-----sumo help page-----");
+            return true;
         };
 
         return new Command(commandName, shortDescription, longDescription, aliases, subCommands, arguments, action);
@@ -79,13 +85,14 @@ public class CommandFactory {
     public static Command createNullCommand() {
         if (!created_null_command) {
             created_null_command = true;
-            final Consumer<String> action = (param) -> {
-                if (param.isEmpty()) {
+            final ArgumentsConsumer action = (arguments) -> {
+                if (arguments.length == 0 || (arguments.length == 1 && arguments[0].isEmpty())) {
                     System.out.print("No command provided.");
                 } else {
-                    System.out.print("No command \"" + param + "\" found.");
+                    System.out.print("No command \"" + arguments[0] + "\" found.");
                 }
-                System.out.println(" Use \"" + CLI.PREFIX + "\" help\" to see all commands.");
+                System.out.println(" Use \"" + CLI.PREFIX + " help\" to see all commands.");
+                return true;
             };
             return new Command(CommandHandler.NULL_COMMAND_NAME, "", "", null, null, null, action);
         } else {
@@ -103,7 +110,10 @@ public class CommandFactory {
         final String[] aliases = new String[] {"gr", "greetings", "greets"};
         final Command[] subCommands = new Command[] {};
         final String[] arguments = new String[] {};
-        final Consumer<String> action = (param) -> System.out.println("Hello there, " + param + "!");
+        final ArgumentsConsumer action = (args) -> {
+            System.out.println("Hello there, " + String.join(" ", args) + "!");
+            return true;
+        };
         return new Command(commandName, shortDescription, longDescription, aliases, subCommands, arguments, action);
     }
 

@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class CLI {
 
@@ -67,7 +68,7 @@ public class CLI {
 
     private void startCLI() {
         if (CLI.DEBUG) {
-            System.out.print("Starting CLI... ");
+            System.out.print("Starting CLI (DEBUG)... ");
         }
         System.out.println("sumo v-" + CLI.VERSION);
 
@@ -90,29 +91,24 @@ public class CLI {
         String cleanedCommandString = CLI.SUBSTITUTE_PATTERN.matcher(line).replaceAll(" ").trim();
         String[] commandParts = cleanedCommandString.split(" ");
 
-        // Length 1 means either NO base command provided, OR just ONE base command
-        // In both cases, try to get the command from the hashmap, if the string is empty, or it's an unknown command
+        // Length 1 commandParts Array means either NO base command provided, OR just ONE base command
+        // In both cases, try to get the command from the hashmap, weather the string is empty or it's an unknown command
         // the null command will be pulled
+        // Else, the actual command will be pulled and executed
         Command command = commandHandler.getCommandHashMap().get(commandParts[0]);
-        if (commandParts.length == 1) {
-            command.execute("");
-        } else { // Length > 1 means there is a base command and at least one argument
-            // Iterate through the arguments, skip the first one (first one is the base command)
-            Arrays.stream(commandParts).skip(1).forEach(commandString -> {
+        String[] commandArguments = Arrays.stream(commandParts).skip(1).toArray(String[]::new);
 
-            });
+        // if we have the null command, we want to provide it with every commandPart, not only the commandArguments
+        boolean success = true;
+        if (command.getCommandName().equals(CommandHandler.NULL_COMMAND_NAME)) {
+            success = command.execute(commandParts);
+        } else {
+            success = command.execute(commandArguments);
         }
-        // Else the first element is the base command
-        String baseCommandString = commandParts[0];
 
-
-        // base command is the first command part
-        //Command baseCommand = commandHandler.getCommandHashMap().get(commandParts[0]);
-        // execute command
-//        boolean success = command.execute("temp");
-//        if(!success && CLI.DEBUG) {
-//            System.out.println("Command " + commandString + " failed.");
-//        }
+        if (CLI.DEBUG && !success) {
+            System.out.println("Command " + command.getCommandName() + " was not executed successfully.");
+        }
     }
 
     private void initializeCommands() {
