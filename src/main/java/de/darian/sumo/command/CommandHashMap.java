@@ -11,6 +11,9 @@ public class CommandHashMap extends HashMap<String, Command> {
         super(commands.size());
         commands.forEach(cmd -> {
             super.put(cmd.getCommandName(), cmd);
+            for (String alias : cmd.getAliases()) {
+                super.put(alias, cmd);
+            }
             if (CLI.DEBUG) {
                 System.out.println("Added command: " + cmd.getCommandName());
             }

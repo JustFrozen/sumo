@@ -99,15 +99,11 @@ public class CLI {
         String[] commandArguments = Arrays.stream(commandParts).skip(1).toArray(String[]::new);
 
         // if we have the null command, we want to provide it with every commandPart, not only the commandArguments
-        boolean success = true;
+        boolean success;
         if (command.getCommandName().equals(CommandHandler.NULL_COMMAND_NAME)) {
             success = command.execute(commandParts);
         } else {
             success = command.execute(commandArguments);
-        }
-
-        if (CLI.DEBUG && !success) {
-            System.out.println("Command " + command.getCommandName() + " was not executed successfully.");
         }
     }
 

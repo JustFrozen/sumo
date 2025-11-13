@@ -94,7 +94,7 @@ public class CommandFactory {
                 System.out.println(" Use \"" + CLI.PREFIX + " help\" to see all commands.");
                 return true;
             };
-            return new Command(CommandHandler.NULL_COMMAND_NAME, "", "", null, null, null, action);
+            return new Command(CommandHandler.NULL_COMMAND_NAME, "", "", new String[] {}, null, null, action);
         } else {
             if (CLI.DEBUG) {
                 System.out.println("Can't create null command. Command was already created.");

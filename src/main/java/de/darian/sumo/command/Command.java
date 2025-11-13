@@ -1,6 +1,8 @@
 package de.darian.sumo.command;
 
 import de.darian.sumo.cli.CLI;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Command {
 
@@ -12,7 +14,7 @@ public class Command {
     private final String[] arguments;
     private final ArgumentsConsumer action;
 
-    public Command(String command, String shortDescription, String longDescription, String[] aliases, Command[] subCommands, String[] arguments, ArgumentsConsumer action) {
+    public Command(@NotNull String command, @Nullable String shortDescription, @Nullable String longDescription, @NotNull String[] aliases, @Nullable Command[] subCommands, @Nullable String[] arguments, @NotNull ArgumentsConsumer action) {
         this.commandName = command;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
@@ -23,7 +25,7 @@ public class Command {
     }
 
     public boolean execute(String[] arguments) {
-        boolean success = true;
+        boolean success;
         try {
             success = action.accept(arguments);
         } catch (Exception e) {
