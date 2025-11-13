@@ -28,6 +28,7 @@ public class CLI {
     public static final Pattern COMMAND_PATTERN = Pattern.compile(commandRegex, Pattern.CASE_INSENSITIVE);
     public static final Pattern SUBSTITUTE_PATTERN = Pattern.compile(substituteRegex, Pattern.CASE_INSENSITIVE);
     public static final Pattern EXIT_PATTERN = Pattern.compile(exitRegex, Pattern.CASE_INSENSITIVE);
+    public static final String HELP_SENTENCE = "Use \"" + CLI.PREFIX + " help\" to see all commands.";
 
     private Terminal terminal;
     private LineReader reader;

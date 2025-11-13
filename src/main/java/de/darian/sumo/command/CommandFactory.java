@@ -87,11 +87,11 @@ public class CommandFactory {
             created_null_command = true;
             final ArgumentsConsumer action = (arguments) -> {
                 if (arguments.length == 0 || (arguments.length == 1 && arguments[0].isEmpty())) {
-                    System.out.print("No command provided.");
+                    System.out.print("No command provided. ");
                 } else {
-                    System.out.print("No command \"" + arguments[0] + "\" found.");
+                    System.out.print("No command \"" + arguments[0] + "\" found. ");
                 }
-                System.out.println(" Use \"" + CLI.PREFIX + " help\" to see all commands.");
+                System.out.println(CLI.HELP_SENTENCE);
                 return true;
             };
             return new Command(CommandHandler.NULL_COMMAND_NAME, "", "", new String[] {}, null, null, action);
@@ -111,7 +111,11 @@ public class CommandFactory {
         final Command[] subCommands = new Command[] {};
         final String[] arguments = new String[] {};
         final ArgumentsConsumer action = (args) -> {
-            System.out.println("Hello there, " + String.join(" ", args) + "!");
+            if (args.length == 0 || (args.length == 1 && args[0].isEmpty())) {
+                System.out.println("No one to greet provided. " + CLI.HELP_SENTENCE);
+            } else {
+                System.out.println("Hello there, " + String.join(" ", args) + "!");
+            }
             return true;
         };
         return new Command(commandName, shortDescription, longDescription, aliases, subCommands, arguments, action);
