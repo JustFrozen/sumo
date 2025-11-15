@@ -10,6 +10,7 @@ public class Main {
             debug = Boolean.parseBoolean(args[0]);
         }
         CLI cli = new CLI(debug);
-        Sumo sumo = new Sumo();
+        Sumo sumo = new Sumo(); //
+
     }
 }

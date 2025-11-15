@@ -2,6 +2,7 @@ package de.darian.sumo.cli;
 
 import de.darian.sumo.cli.command.Command;
 import de.darian.sumo.cli.command.CommandHandler;
+import de.darian.sumo.sumo.Sumo;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.history.DefaultHistory;
@@ -16,7 +17,7 @@ import java.util.regex.Pattern;
 
 public class CLI {
 
-    public static final String PREFIX = "sumo";
+    public static final String PREFIX = Sumo.APP_NAME;
     public static final String EXIT_WORD = "exit";
     public static String VERSION = "unknown";
     public static boolean DEBUG = false;
