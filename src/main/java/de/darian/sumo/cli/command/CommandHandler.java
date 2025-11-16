@@ -6,6 +6,8 @@ import de.darian.sumo.cli.command.commandhelper.CommandHashMap;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 public class CommandHandler {
 
     public static final String NULL_COMMAND_NAME = "SWNoIExpZWJlIEZpbmph (Null command)";
@@ -15,7 +17,7 @@ public class CommandHandler {
     public static final int MAX_SHORT_DESCRIPTION_LENGTH = 50;
     public static final int MAX_LONG_DESCRIPTION_LENGTH = 200;
 
-    private static final List<Command> commandList = new ArrayList<>();
+    private static final List<Command> globalCommandList = new ArrayList<>();
     private final CommandHashMap commandHashMap;
 
     public CommandHandler() {
@@ -24,22 +26,35 @@ public class CommandHandler {
 
         Command nullCommand = CommandFactory.createNullCommand();
         if(nullCommand != null) {
+            commands.add(nullCommand);
             validCommands.add(nullCommand);
         }
 
         if (CLI.DEBUG) {
-            System.out.println("Created and validated " + validCommands.size() + " command(s).");
+            System.out.println("Created " + commands.size() + " and validated " + validCommands.size() + " command(s).");
         }
 
         // This modified hashmap contains every valid command mapped to its name and aliases
         commandHashMap = new CommandHashMap(validCommands);
 
-        checkCommandCompleteness();
+        checkCommandCompleteness(commands, validCommands);
     }
 
-    private void checkCommandCompleteness() {
+    private void checkCommandCompleteness(List<Command> commands, List<Command> validCommands) {
         // check every command
-        if (commandHashMap.values().size() != ) {}
+        int diff = abs(commands.size() - globalCommandList.size());
+        if (diff != 0) {
+            // This means that a command was created but forgot to add to the list later on
+            System.out.println("There are " + diff + " commands that are not added therefore not loaded into the CLI.");
+        }
+
+        // check valid commands
+        diff = abs(validCommands.size() - globalCommandList.size());
+        if (diff != 0) {
+            // This means that a command was created but forgot to add to the list later on
+            // OR the command was added and is not valid
+            System.out.println("There are " + diff + " commands that are not added OR that are not valid and therefore not loaded into the CLI.");
+        }
     }
 
     private List<Command> validateCommands(List<Command> commands) {
@@ -93,11 +108,11 @@ public class CommandHandler {
         return validCommands;
     }
 
-    public CommandHashMap getCommandHashMap() {
-        return commandHashMap;
+    public Command getCommand(String commandName) {
+        return commandHashMap.get(commandName);
     }
 
     public static void addCommand(Command command) {
-        commandList.add(command);
+        globalCommandList.add(command);
     }
 }

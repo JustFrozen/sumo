@@ -14,17 +14,9 @@ public class Sumo {
     public static final String SUMO_FOLDER_PATH = ABSOLUTE_DIR_PATH + File.separator + "." + APP_NAME;
 
     public Sumo() {
-        boolean success = init();
-        if (!success) {
-            System.out.println("Failed to sumo init.");
-            return;
-        }
-
-        System.out.println("Successfully sumo init.");
-
     }
 
-    private boolean init() {
+    public boolean init() {
         boolean created = createSumoFolder();
         if (!created) {
             return false;
@@ -93,7 +85,7 @@ public class Sumo {
         return hash == null ? null : SHA256Hasher.hashToHexString(hash);
     }
 
-    public void addCommand(String path) {
+    public void add(String path) {
         File dir = new File(path);
 
         if(dir.exists()) {

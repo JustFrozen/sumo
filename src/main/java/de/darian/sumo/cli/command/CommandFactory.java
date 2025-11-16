@@ -29,9 +29,15 @@ public class CommandFactory {
     }
 
     private static void createCommands0() {
-        commands.add(createGreetCommand());
-        commands.add(createVersionCommand());
-        commands.add(createHelpCommand());
+        final Command greetCommand = createGreetCommand();
+        final Command versionCommand = createVersionCommand();
+        final Command helpCommand = createHelpCommand();
+        final Command initCommand = createInitCommand();
+
+        commands.add(greetCommand);
+        commands.add(versionCommand);
+        commands.add(helpCommand);
+        commands.add(initCommand);
 
         // Note: NullCommand is created later by CommandHandler to avoid validation
     }
@@ -47,6 +53,18 @@ public class CommandFactory {
             System.out.println("sumo version: " + CLI.VERSION);
             return true;
         };
+
+        return new Command(commandName, shortDescription, longDescription, aliases, subCommands, arguments, action);
+    }
+
+    private static Command createInitCommand() {
+        final String commandName = "init";
+        final String shortDescription = "Initializes the version control";
+        final String longDescription = "Initializes the version control";
+        final String[] aliases = new String[] {"i"};
+        final Command[] subCommands = new Command[] {};
+        final String[] arguments = new String[] {};
+        final ArgumentsConsumer action = (_) -> CLI.sumo().init();
 
         return new Command(commandName, shortDescription, longDescription, aliases, subCommands, arguments, action);
     }

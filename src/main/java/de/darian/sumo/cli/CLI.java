@@ -28,14 +28,14 @@ public class CLI {
     public static final Pattern EXIT_PATTERN = Pattern.compile(exitRegex, Pattern.CASE_INSENSITIVE);
     public static final String HELP_SENTENCE = "Use \"" + CLI.PREFIX + " help\" to see all commands.";
 
-    private final Sumo sumo;
+    private static Sumo sumo;
     public static boolean DEBUG;
     private Terminal terminal;
     private LineReader reader;
     private CommandHandler commandHandler;
 
     public CLI(Sumo sumo, boolean debug) {
-        this.sumo = sumo;
+        CLI.sumo = sumo;
         CLI.DEBUG = debug;
 
         getVersionFromPom();
@@ -97,7 +97,7 @@ public class CLI {
         // In both cases, try to get the command from the hashmap, weather the string is empty or it's an unknown command
         // the null command will be pulled
         // Else, the actual command will be pulled and executed
-        Command command = commandHandler.getCommandHashMap().get(commandParts[0]);
+        Command command = commandHandler.getCommand(commandParts[0]);
         String[] commandArguments = Arrays.stream(commandParts).skip(1).toArray(String[]::new);
 
         // if we have the null command, we want to provide it with every commandPart, not only the commandArguments
@@ -106,6 +106,10 @@ public class CLI {
             success = command.execute(commandParts);
         } else {
             success = command.execute(commandArguments);
+        }
+
+        if (!success) {
+            System.out.println("Something went wrong while executing command: " + command.getCommandName());
         }
     }
 
@@ -143,5 +147,9 @@ public class CLI {
         if (DEBUG) {
             System.out.println("Built JLine Terminal.");
         }
+    }
+
+    public static Sumo sumo() {
+        return sumo;
     }
 }
