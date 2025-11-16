@@ -14,6 +14,8 @@ public class CommandHandler {
     public static final int MAX_ALIAS_AMOUNT = 3;
     public static final int MAX_SHORT_DESCRIPTION_LENGTH = 50;
     public static final int MAX_LONG_DESCRIPTION_LENGTH = 200;
+
+    private static final List<Command> commandList = new ArrayList<>();
     private final CommandHashMap commandHashMap;
 
     public CommandHandler() {
@@ -29,7 +31,15 @@ public class CommandHandler {
             System.out.println("Created and validated " + validCommands.size() + " command(s).");
         }
 
+        // This modified hashmap contains every valid command mapped to its name and aliases
         commandHashMap = new CommandHashMap(validCommands);
+
+        checkCommandCompleteness();
+    }
+
+    private void checkCommandCompleteness() {
+        // check every command
+        if (commandHashMap.values().size() != ) {}
     }
 
     private List<Command> validateCommands(List<Command> commands) {
@@ -85,5 +95,9 @@ public class CommandHandler {
 
     public CommandHashMap getCommandHashMap() {
         return commandHashMap;
+    }
+
+    public static void addCommand(Command command) {
+        commandList.add(command);
     }
 }

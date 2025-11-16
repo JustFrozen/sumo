@@ -6,23 +6,22 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 
 public class Sumo {
 
     public static final String APP_NAME = "sumo";
-    public static final String RELATIVE_DIR_PATH = System.getProperty("user.dir");
-    public static final String SUMO_FOLDER_PATH = RELATIVE_DIR_PATH + File.separator + "." + APP_NAME;
-    public static final String SUMO_INIT_FILE_PATH = SUMO_FOLDER_PATH + File.separator + "init";
-
-    public static void main(String[] args) {
-        new Sumo();
-    }
+    public static final String ABSOLUTE_DIR_PATH = System.getProperty("user.dir");
+    public static final String SUMO_FOLDER_PATH = ABSOLUTE_DIR_PATH + File.separator + "." + APP_NAME;
 
     public Sumo() {
-        boolean s = init();
+        boolean success = init();
+        if (!success) {
+            System.out.println("Failed to sumo init.");
+            return;
+        }
+
+        System.out.println("Successfully sumo init.");
+
     }
 
     private boolean init() {
@@ -30,23 +29,49 @@ public class Sumo {
         if (!created) {
             return false;
         }
-        System.out.println("Created \"." + APP_NAME + "\" folder");
+        System.out.println("Successfully created " + APP_NAME + " folder.");
 
-        List<Path> l = snapshotDir();
+        String dirHash = snapshotDir();
+        if (dirHash == null) {
+            return false;
+        }
+        System.out.println("Successfully snapshot working directory.");
+
+        boolean saved = saveSnapshotInSumoFolder(dirHash);
+        if (!saved) {
+            return false;
+        }
+        System.out.println("Successfully saved snapshot in " + APP_NAME + " folder.");
+
         return true;
     }
 
-    private static boolean createSumoFolder() {
+    private boolean saveSnapshotInSumoFolder(String dirHash) {
+        Path snapshotPath = Path.of(ABSOLUTE_DIR_PATH).relativize(Path.of(SUMO_FOLDER_PATH + File.separator + "snapshot"));
+        try {
+            Files.writeString(snapshotPath, dirHash);
+        } catch (IOException e) {
+            System.out.println("Failed to save snapshot in sumo folder. Error: " + e.getMessage());
+            return false;
+        }
+        System.out.println("Saved snapshot in \"" + snapshotPath.toString() + "\".");
+        return true;
+    }
+
+    private boolean createSumoFolder() {
         File sumoFolder = new File(SUMO_FOLDER_PATH);
         if (!sumoFolder.exists()) {
             boolean success = sumoFolder.mkdir();
             if (!success) {
                 System.out.println("Failed to create \"." + APP_NAME + "\" folder.");
                 return false;
+            } else {
+                System.out.println("Created \"." + APP_NAME + "\" folder");
             }
         } else {
             if (sumoFolder.isDirectory()) {
-                System.out.println("\"." + APP_NAME + "\" folder already exists");
+                System.out.println("\"." + APP_NAME + "\" folder already exists.");
+                // as of now, now following logic
             } else {
                 System.out.println("A file with the reserved sumo folder name \"." + APP_NAME + "\" already exists.");
             }
@@ -63,36 +88,9 @@ public class Sumo {
         return true;
     }
 
-    private List<Path> snapshotDir() {
-//        String exPath = RELATIVE_DIR_PATH + File.separator + "src\\main\\java\\de\\darian\\sumo\\main\\test.txt";
-//        System.out.println(RELATIVE_DIR_PATH);
-//        System.out.println(SUMO_INIT_FILE_PATH);
-//        String hash = SHA256Hasher.hashFileWithPath(exPath);
-//        if (hash == null) {
-//            System.out.println("Could not snapshot directory. Failed to hash \"" + exPath + "\".");
-//            return null;
-//        }
-//        System.out.println("SHA-256 Hash: " + hash);
-
-
-        List<Path> snapshot = new ArrayList<>();
-        try (Stream<Path> stream = Files.walk(Path.of(RELATIVE_DIR_PATH))) {
-            snapshot = stream
-                    .filter(file -> {
-                        try {
-                            return Files.isRegularFile(file) || Files.isDirectory(file) || Files.isHidden(file) || Files.isSymbolicLink(file);
-                        } catch (IOException _) {
-                            // this is raised by Files#isHidden. We assume here that the directory/file cannot be read,
-                            // so we just return false
-                            return false;
-                        }
-                    })
-                    .toList();
-        } catch (IOException e) {
-            System.out.println("Could not walk the root directory. Error: " + e.getMessage());
-        }
-
-        return snapshot;
+    private String snapshotDir() {
+        byte[] hash = SHA256Hasher.hashDirectory(".");
+        return hash == null ? null : SHA256Hasher.hashToHexString(hash);
     }
 
     public void addCommand(String path) {

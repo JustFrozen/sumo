@@ -2,6 +2,7 @@ package de.darian.sumo.cli.command;
 
 import de.darian.sumo.cli.CLI;
 import de.darian.sumo.cli.command.commandhelper.ArgumentsConsumer;
+import de.darian.sumo.cli.command.commandhelper.CommandHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +24,9 @@ public class Command {
         this.subCommands = subCommands;
         this.arguments = arguments;
         this.action = action;
+
+        // This is for checking later on if every command created is eventually validated and/or added
+        CommandHandler.addCommand(this);
     }
 
     public boolean execute(String[] arguments) {

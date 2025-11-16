@@ -20,8 +20,6 @@ public class CLI {
     public static final String PREFIX = Sumo.APP_NAME;
     public static final String EXIT_WORD = "exit";
     public static String VERSION = "unknown";
-    public static boolean DEBUG = false;
-
     private static final String commandRegex = "(^\\s*" + PREFIX + "\\s*$)|(^\\s*" + PREFIX + "\\s*.+$)";
     private static final String substituteRegex = "(\\s*sumo\\s*)|(\\s+)";
     private static final String exitRegex = "^\\s*" + EXIT_WORD + "\\s*$";
@@ -30,11 +28,14 @@ public class CLI {
     public static final Pattern EXIT_PATTERN = Pattern.compile(exitRegex, Pattern.CASE_INSENSITIVE);
     public static final String HELP_SENTENCE = "Use \"" + CLI.PREFIX + " help\" to see all commands.";
 
+    private final Sumo sumo;
+    public static boolean DEBUG;
     private Terminal terminal;
     private LineReader reader;
     private CommandHandler commandHandler;
 
-    public CLI(boolean debug) {
+    public CLI(Sumo sumo, boolean debug) {
+        this.sumo = sumo;
         CLI.DEBUG = debug;
 
         getVersionFromPom();
