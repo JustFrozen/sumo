@@ -1,5 +1,6 @@
 package de.darian.sumo.sumo;
 
+import de.darian.sumo.cli.CLI;
 import de.darian.sumo.sumo.util.SHA256Hasher;
 
 import java.io.File;
@@ -13,7 +14,12 @@ public class Sumo {
     public static final String ABSOLUTE_DIR_PATH = System.getProperty("user.dir");
     public static final String SUMO_FOLDER_PATH = ABSOLUTE_DIR_PATH + File.separator + "." + APP_NAME;
 
-    public Sumo() {
+    public static boolean DEBUG;
+
+    public Sumo(boolean debug) {
+        Sumo.DEBUG = debug;
+
+        CLI cli = new CLI(this, debug);
     }
 
     public boolean init() {
